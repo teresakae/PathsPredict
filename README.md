@@ -17,9 +17,8 @@ Frontend: HTML, CSS, JavaScript
 Data Source: Satu Data Jakarta (2024-2025)  
 
 ## 📂 Folder Structure
-├── Jumlah_Penumpang_Angkutan_Umum_yang_Terlayani_Perhari.csv
-
-├── app.py
+├── Jumlah_Penumpang_Angkutan_Umum_yang_Terlayani_Perhari.csv  <br>
+├── app.py 
 
 ├── categorical_features.pkl
 
