@@ -5,13 +5,9 @@ This project was developed as an End-of-Semester Project for "Sistem Informasi C
 
 ## 🚀 Features
 * **Congestion Prediction**: Utilizes a Logistic Regression model to predict "TINGGI" (High) or "RENDAH" (Low) congestion levels for KRL and Transjakarta.  
-
 * **Predictive Dashboard**: Forecasts congestion for upcoming days based on historical and real-time data.  
-
 * **Data Management (CRUD)**: Allows for adding, viewing, updating, and deleting historical ridership data.  
-
 * **Data Export**: Exports historical and crowdsourced data to an Excel file for further analysis.  
-
 * **Real-time Data Integration**: Continuously updates predictions based on new data to maintain accuracy.  
 
 ## 🛠 Tech Stack
@@ -31,10 +27,10 @@ Data Source: Satu Data Jakarta (2024-2025)
 └── numerical_features.pkl
 
 ## 🧪 Getting Started
-`git clone <repository_url>
-cd PredictJakarta
-pip install -r requirements.txt
-python app.py
+`git clone <repository_url>  
+cd PredictJakarta  
+pip install -r requirements.txt  
+python app.py  
 Visit http://localhost:5000 to explore the application.`
 
 ## ✅ Future Improvements
