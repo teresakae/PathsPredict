@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediksi & Manajemen Penumpang</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        font-family: 'Inter', sans-serif;
+        margin: 0;
+        padding: 40px;
+        background-color: #f0f2f5;
+        color: #333;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        box-sizing: border-box;
+    }
+    .container {
+        max-width: 900px;
+        width: 100%;
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 1rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    h1 {
+        text-align: center;
+        color: #1a73e8;
+        margin-bottom: 30px;
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+    /* --- MODIFICATION START --- */
+    .tabs {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 25px;
+        border-bottom: none; /* Remove the underline from the container */
+        gap: 10px; /* Add some space between the buttons */
+    }
+    .tab-button {
+        flex: 1; /* Make buttons take up equal space */
+        padding: 12px 20px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 1rem;
+        border: 2px solid #1a73e8; /* Blue border for inactive */
+        border-radius: 0.5rem;
+        background-color: #fff; /* White background for inactive */
+        color: #1a73e8; /* Blue text for inactive */
+        transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+    }
+    .tab-button.active {
+        background-color: #1a73e8; /* Blue background for active */
+        color: #fff; /* White text for active */
+        border-color: #1a73e8;
+    }
+    .tab-button:not(.active):hover {
+        background-color: #155bb5; /* Darker blue on hover */
+        color: #fff; /* White text on hover */
+        border-color: #155bb5;
+    }
+    /* --- MODIFICATION END --- */
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #555;
+    }
+    input[type="date"], input[type="number"], input[type="text"], select {
+        width: calc(100% - 22px);
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 0.5rem;
+        box-sizing: border-box;
+        transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+    input[type="date"]:focus, input[type="number"]:focus, input[type="text"]:focus, select:focus {
+        border-color: #1a73e8;
+        box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+        outline: none;
+    }
+    .range-options {
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+    .range-options label {
+        margin-bottom: 0;
+        font-weight: 400;
+        cursor: pointer;
+    }
+    .range-options input[type="radio"] {
+        margin-right: 5px;
+        cursor: pointer;
+    }
+    button {
+        width: 100%;
+        padding: 12px;
+        background-color: #1a73e8;
+        color: white;
+        border: none;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        font-size: 1.1rem;
+        font-weight: 600;
+        transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 15px;
+    }
+    button:hover {
+        background-color: #155bb5;
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    }
+    #loading, #dataLoading {
+        display: none;
+        text-align: center;
+        margin-top: 25px;
+        color: #666;
+        font-style: italic;
+    }
+    .prediction-table, .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 30px;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    .prediction-table th, .prediction-table td,
+    .data-table th, .data-table td {
+        border: 1px solid #eee;
+        padding: 12px;
+        text-align: center;
+    }
+    .prediction-table th, .data-table th {
+        background-color: #1a73e8;
+        color: white;
+        font-weight: 600;
+    }
+    .prediction-table tbody tr:nth-child(even), .data-table tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+    .prediction-table tbody tr:hover, .data-table tbody tr:hover {
+        background-color: #f0f5ff;
+    }
+    .result-tinggi { color: red; font-weight: bold; }
+    .result-rendah { color: green; font-weight: bold; }
+    .data-actions button {
+        width: auto;
+        padding: 8px 12px;
+        font-size: 0.9rem;
+        margin: 0 5px;
+        box-shadow: none;
+    }
+    .data-actions .edit-btn {
+        background-color: #ffc107;
+        color: #333;
+    }
+    .data-actions .edit-btn:hover {
+        background-color: #e0a800;
+    }
+    .data-actions .delete-btn {
+        background-color: #dc3545;
+    }
+    .data-actions .delete-btn:hover {
+        background-color: #c82333;
+    }
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+        justify-content: center;
+        align-items: center;
+    }
+    .modal-content {
+        background-color: #fefefe;
+        margin: auto;
+        padding: 30px;
+        border: 1px solid #888;
+        border-radius: 1rem;
+        width: 80%;
+        max-width: 500px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        position: relative;
+    }
+    .close-button {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        position: absolute;
+        top: 10px;
+        right: 20px;
+    }
+    .close-button:hover,
+    .close-button:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+    .message-box {
+        padding: 10px;
+        border-radius: 0.5rem;
+        margin-bottom: 15px;
+        text-align: center;
+        font-weight: 500;
+    }
+    .message-box.success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+    .message-box.error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+    @media (max-width: 768px) {
+        body {
+            padding: 15px;
+        }
+        .container {
+            padding: 20px;
+        }
+        h1 {
+            font-size: 1.75rem;
+        }
+        .range-options {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .prediction-table th, .prediction-table td,
+        .data-table th, .data-table td {
+            padding: 8px;
+            font-size: 0.9rem;
+        }
+        .data-actions button {
+            padding: 6px 10px;
+            font-size: 0.8rem;
+        }
+    }
+</style>
+</head>
+<body>
+    <div class="container">
+        <h1>Prediksi & Manajemen Penumpang Angkutan Umum</h1>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="showSection('predictionSection')">Prediksi Penumpang</button>
+            <button class="tab-button" onclick="showSection('dataManagementSection')">Manajemen Data Historis</button>
+        </div>
+
+        <div id="generalMessageBox" class="message-box" style="display: none;"></div>
+
+        <div id="predictionSection" class="section">
+            <form id="predictionForm">
+                <label for="input_date">Pilih Tanggal Mulai Prediksi:</label>
+                <input type="date" id="input_date" name="input_date" required>
+
+                <div class="range-options">
+                    <label>Jangka Waktu Prediksi:</label>
+                    <div>
+                        <input type="radio" id="3days" name="prediction_days" value="3" checked>
+                        <label for="3days">3 Hari</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="7days" name="prediction_days" value="7">
+                        <label for="7days">7 Hari</label>
+                    </div>
+                </div>
+
+                <button type="submit">Prediksi</button>
+            </form>
+            <div id="loading">Memproses prediksi...</div>
+            <div id="result"></div>
+        </div>
+
+        <div id="dataManagementSection" class="section" style="display: none;">
+            <h2 style="font-size: 1.75rem; font-weight: 600; color: #1a73e8; margin-bottom: 20px; text-align: center;">Tambah Data Historis Baru</h2>
+            <form id="addRecordForm">
+                <label for="addDate">Tanggal:</label>
+                <input type="date" id="addDate" required>
+
+                <label for="addModa">Jenis Moda:</label>
+                <select id="addModa" required>
+                    <option value="">Pilih Moda</option>
+                    <option value="KRL">KRL</option>
+                    <option value="Transjakarta">Transjakarta</option>
+                    </select>
+
+                <label for="addJumlah">Jumlah Penumpang:</label>
+                <input type="number" id="addJumlah" min="0" required>
+
+                <button type="submit">Tambah Data</button>
+            </form>
+
+            <h2 style="font-size: 1.75rem; font-weight: 600; color: #1a73e8; margin-top: 40px; margin-bottom: 20px; text-align: center;">Ekspor Data ke Excel</h2>
+            <button id="exportExcelButton" type="button">Ekspor Data ke Excel</button>
+            <div id="exportResult" class="message-box" style="display: none;"></div>
+
+
+            <h2 style="font-size: 1.75rem; font-weight: 600; color: #1a73e8; margin-top: 40px; margin-bottom: 20px; text-align: center;">Data Historis Tersimpan</h2>
+            <div id="dataLoading" style="display: none;">Memuat data...</div>
+            <div id="historicalDataTableContainer">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>Jenis Moda</th>
+                            <th>Jumlah Penumpang</th>
+                            <th>Tingkat Keramaian</th> <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historicalDataTableBody">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2 style="font-size: 1.5rem; font-weight: 600; color: #1a73e8; margin-bottom: 20px; text-align: center;">Edit Data Penumpang</h2>
+            <form id="editRecordForm">
+                <input type="hidden" id="editId">
+                <label for="editDate">Tanggal:</label>
+                <input type="date" id="editDate" required>
+
+                <label for="editModa">Jenis Moda:</label>
+                <select id="editModa" required>
+                    <option value="KRL">KRL</option>
+                    <option value="Transjakarta">Transjakarta</option>
+                    </select>
+
+                <label for="editJumlah">Jumlah Penumpang:</label>
+                <input type="number" id="editJumlah" min="0" required>
+
+                <button type="submit">Simpan Perubahan</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- DOM Elements ---
+        const predictionForm = document.getElementById('predictionForm');
+        const inputDate = document.getElementById('input_date');
+        const predictionDays = document.getElementById('prediction_days');
+        const loadingDiv = document.getElementById('loading');
+        const resultDiv = document.getElementById('result');
+
+        const addRecordForm = document.getElementById('addRecordForm');
+        const addDate = document.getElementById('addDate');
+        const addModa = document.getElementById('addModa');
+        const addJumlah = document.getElementById('addJumlah');
+        const historicalDataTableBody = document.getElementById('historicalDataTableBody');
+        const dataLoading = document.getElementById('dataLoading');
+
+        // Changed from import elements to export elements
+        const exportExcelButton = document.getElementById('exportExcelButton');
+        const exportResultDiv = document.getElementById('exportResult'); // Renamed from importResultDiv
+
+        const editModal = document.getElementById('editModal');
+        const closeButton = document.querySelector('.close-button');
+        const editRecordForm = document.getElementById('editRecordForm');
+        const editId = document.getElementById('editId');
+        const editDate = document.getElementById('editDate');
+        const editModa = document.getElementById('editModa');
+        const editJumlah = document.getElementById('editJumlah');
+
+        const predictionSection = document.getElementById('predictionSection');
+        const dataManagementSection = document.getElementById('dataManagementSection');
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const generalMessageBox = document.getElementById('generalMessageBox');
+
+        let historicalData = []; // To store fetched historical data
+
+        // --- Initial Setup ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set default date for prediction form to today
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            inputDate.value = `${yyyy}-${mm}-${dd}`;
+            addDate.value = `${yyyy}-${mm}-${dd}`; // Set default date for add form too
+        });
+
+        // --- Tab Switching Logic ---
+        function showSection(sectionId) {
+            // Hide all sections
+            predictionSection.style.display = 'none';
+            dataManagementSection.style.display = 'none';
+
+            // Deactivate all tab buttons
+            tabButtons.forEach(button => button.classList.remove('active'));
+
+            // Show the selected section
+            document.getElementById(sectionId).style.display = 'block';
+
+            // Activate the corresponding tab button
+            event.target.classList.add('active');
+
+            // If switching to data management, load data
+            if (sectionId === 'dataManagementSection') {
+                loadHistoricalData();
+            }
+            hideMessageBox(generalMessageBox); // Clear general messages on tab switch
+        }
+
+        // --- Prediction Logic (Existing) ---
+        predictionForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const date = inputDate.value;
+            const days = document.querySelector('input[name="prediction_days"]:checked').value;
+
+            resultDiv.innerHTML = '';
+            loadingDiv.style.display = 'block';
+            hideMessageBox(generalMessageBox);
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ input_date: date, prediction_days: parseInt(days) })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+                }
+
+                const allPredictionsData = await response.json();
+                let tableHtml = `<table class="prediction-table"><thead><tr>
+                                        <th>Tanggal</th>
+                                        <th>KRL</th>
+                                        <th>Transjakarta</th>
+                                        </tr></thead><tbody>`;
+
+                const modes = ['KRL', 'Transjakarta'];
+                const dates = Object.keys(allPredictionsData).sort();
+
+                dates.forEach(dateStr => {
+                    const dailyPredictions = allPredictionsData[dateStr];
+                    tableHtml += `<tr><td>${dateStr}</td>`;
+                    modes.forEach(modeName => {
+                        const result = dailyPredictions[modeName];
+                        if (result) {
+                            const prediction = result.prediction;
+                            let displayProbability;
+
+                            if (prediction.includes('TINGGI')) {
+                                displayProbability = result.probability_high;
+                            } else {
+                                displayProbability = 1 - result.probability_high;
+                            }
+
+                            const probability = (displayProbability * 100).toFixed(2);
+                            const className = prediction.includes('TINGGI') ? 'result-tinggi' : 'result-rendah';
+                            tableHtml += `<td><span class="${className}">${prediction}</span><br>(${probability}%)</td>`;
+                        } else {
+                            tableHtml += `<td>N/A</td>`;
+                        }
+                    });
+                    tableHtml += `</tr>`;
+                });
+                tableHtml += `</tbody></table>`;
+                resultDiv.innerHTML = tableHtml;
+                showMessageBox(generalMessageBox, 'Prediksi berhasil dimuat!', 'success');
+
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.innerHTML = `<p style="color: red; text-align: center; margin-top: 20px;">Terjadi kesalahan: ${error.message}</p>`;
+                showMessageBox(generalMessageBox, `Error: ${error.message}`, 'error');
+            } finally {
+                loadingDiv.style.display = 'none';
+            }
+        });
+
+        // --- CRUD Logic ---
+
+        // Load Historical Data
+        async function loadHistoricalData() {
+            historicalDataTableBody.innerHTML = ''; // Clear existing data
+            dataLoading.style.display = 'block';
+            hideMessageBox(generalMessageBox); // Clear general message box
+
+            try {
+                const response = await fetch('/data'); // Assuming /data endpoint for reading all data
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                historicalData = await response.json(); // Store data globally
+                renderHistoricalData();
+            } catch (error) {
+                console.error('Error loading historical data:', error);
+                historicalDataTableBody.innerHTML = `<tr><td colspan="5" style="color: red;">Gagal memuat data: ${error.message}</td></tr>`; // Updated colspan
+                showMessageBox(generalMessageBox, `Gagal memuat data: ${error.message}`, 'error');
+            } finally {
+                dataLoading.style.display = 'none';
+            }
+        }
+
+        // Render Historical Data to Table
+        function renderHistoricalData() {
+            historicalDataTableBody.innerHTML = '';
+            if (historicalData.length === 0) {
+                historicalDataTableBody.innerHTML = `<tr><td colspan="5">Tidak ada data historis.</td></tr>`; // Updated colspan
+                return;
+            }
+
+            // Sort data by date and then by mode for consistent display
+            const sortedData = [...historicalData].sort((a, b) => {
+                const dateA = new Date(a.tanggal);
+                const dateB = new Date(b.tanggal);
+                if (dateA - dateB !== 0) {
+                    return dateA - dateB;
+                }
+                return a.jenis_moda.localeCompare(b.jenis_moda);
+            });
+
+            sortedData.forEach(record => {
+                const row = historicalDataTableBody.insertRow();
+                row.innerHTML = `
+                    <td>${formatDate(record.tanggal)}</td>
+                    <td>${record.jenis_moda}</td>
+                    <td>${record.jumlah_penumpang_per_hari}</td>
+                    <td>${record.tingkat_keramaian || 'N/A'}</td> <td class="data-actions">
+                        <button class="edit-btn" onclick="openEditModal('${record.id}')">Edit</button>
+                        <button class="delete-btn" onclick="deleteRecord('${record.id}')">Hapus</button>
+                    </td>
+                `;
+            });
+        }
+
+        // Add New Record
+        addRecordForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const newRecord = {
+                tanggal: addDate.value,
+                jenis_moda: addModa.value,
+                jumlah_penumpang_per_hari: parseInt(addJumlah.value, 10)
+            };
+
+            hideMessageBox(generalMessageBox); // Clear previous messages
+
+            try {
+                const response = await fetch('/data', { // Assuming POST /data for creating
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newRecord)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+                }
+
+                addRecordForm.reset(); // Clear form
+                // Set default date back to today after reset
+                const today = new Date();
+                const yyyy = today.getFullYear();
+                const mm = String(today.getMonth() + 1).padStart(2, '0');
+                const dd = String(today.getDate()).padStart(2, '0');
+                addDate.value = `${yyyy}-${mm}-${dd}`;
+
+                await loadHistoricalData(); // Reload all data to ensure consistency
+                showMessageBox(generalMessageBox, 'Data berhasil ditambahkan!', 'success');
+            } catch (error) {
+                console.error('Error adding record:', error);
+                showMessageBox(generalMessageBox, `Gagal menambahkan data: ${error.message}`, 'error');
+            }
+        });
+
+        // Open Edit Modal
+        function openEditModal(id) {
+            const recordToEdit = historicalData.find(record => record.id === id);
+            if (recordToEdit) {
+                editId.value = recordToEdit.id;
+                editDate.value = recordToEdit.tanggal;
+                editModa.value = recordToEdit.jenis_moda;
+                editJumlah.value = recordToEdit.jumlah_penumpang_per_hari;
+                editModal.style.display = 'flex'; // Show modal
+            }
+        }
+
+        // Close Edit Modal
+        closeButton.addEventListener('click', () => {
+            editModal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target == editModal) {
+                editModal.style.display = 'none';
+            }
+        });
+
+        // Update Record
+        editRecordForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const id = editId.value;
+            const updatedRecord = {
+                tanggal: editDate.value,
+                jenis_moda: editModa.value,
+                jumlah_penumpang_per_hari: parseInt(editJumlah.value, 10)
+            };
+
+            hideMessageBox(generalMessageBox); // Clear previous messages
+
+            try {
+                const response = await fetch(`/data/${id}`, { // Assuming PUT /data/<id> for updating
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updatedRecord)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+                }
+
+                editModal.style.display = 'none'; // Hide modal
+                await loadHistoricalData(); // Reload all data
+                showMessageBox(generalMessageBox, 'Data berhasil diperbarui!', 'success');
+            } catch (error) {
+                console.error('Error updating record:', error);
+                showMessageBox(generalMessageBox, `Gagal memperbarui data: ${error.message}`, 'error');
+            }
+        });
+
+        // Delete Record
+        async function deleteRecord(id) {
+            // Using custom modal for confirmation instead of alert/confirm
+            if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                hideMessageBox(generalMessageBox); // Clear previous messages
+                try {
+                    const response = await fetch(`/data/${id}`, { // Assuming DELETE /data/<id> for deleting
+                        method: 'DELETE'
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+                    }
+
+                    await loadHistoricalData(); // Reload all data
+                    showMessageBox(generalMessageBox, 'Data berhasil dihapus!', 'success');
+                } catch (error) {
+                    console.error('Error deleting record:', error);
+                    showMessageBox(generalMessageBox, `Gagal menghapus data: ${error.message}`, 'error');
+                }
+            }
+        }
+
+        // --- Excel Export Logic (NEW) ---
+        exportExcelButton.addEventListener('click', async function() {
+            hideMessageBox(exportResultDiv);
+            hideMessageBox(generalMessageBox);
+
+            try {
+                // Assuming a new endpoint /export_excel that returns the Excel file
+                const response = await fetch('/export_excel', {
+                    method: 'GET' // Typically GET for downloading
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text(); // Get raw text for better error message
+                    throw new Error(`HTTP error! Status: ${response.status}. Response: ${errorText}`);
+                }
+
+                // Get the filename from the Content-Disposition header
+                const contentDisposition = response.headers.get('Content-Disposition');
+                let filename = 'historical_data.xlsx'; // Default filename
+                if (contentDisposition && contentDisposition.indexOf('attachment') !== -1) {
+                    const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+                    if (filenameMatch && filenameMatch.length > 1) {
+                        filename = filenameMatch[1];
+                    }
+                }
+
+                // Create a blob from the response and trigger download
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = filename; // Set the filename for download
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+
+                showMessageBox(exportResultDiv, 'Data berhasil diekspor ke Excel!', 'success');
+
+            } catch (error) {
+                console.error('Error exporting Excel:', error);
+                showMessageBox(exportResultDiv, `Gagal mengekspor Excel: ${error.message}`, 'error');
+            }
+        });
+
+
+        // --- Utility Functions ---
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-CA', options); // YYYY-MM-DD format for consistency
+        }
+
+        function showMessageBox(element, message, type) {
+            element.textContent = message;
+            element.className = `message-box ${type}`;
+            element.style.display = 'block';
+        }
+
+        function hideMessageBox(element) {
+            element.style.display = 'none';
+            element.textContent = '';
+            element.className = 'message-box'; // Reset classes
+        }
+    </script>
+</body>
+</html>
