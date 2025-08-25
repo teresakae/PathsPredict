@@ -18,18 +18,13 @@ Data Source: Satu Data Jakarta (2024-2025)
 
 ## 📂 Folder Structure
 ├── Jumlah_Penumpang_Angkutan_Umum_yang_Terlayani_Perhari.csv  <br>
-├── app.py 
-
-├── categorical_features.pkl
-
-├── index.html
-
-├── logistic_regression_penumpang_pipeline.pkl
-
-├── model_features_with_moda.pkl
-
-├── model_training.py
-└── numerical_features.pkl
+├── app.py  <br>
+├── categorical_features.pkl  <br>
+├── index.html  <br> 
+├── logistic_regression_penumpang_pipeline.pkl  <br>
+├── model_features_with_moda.pkl   <br>
+├── model_training.py  <br>
+└── numerical_features.pkl  <br>
 
 ## 🧪 Getting Started
 `git clone <repository_url>  
