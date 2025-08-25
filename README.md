@@ -1,6 +1,6 @@
 ## 🚆 PathsPredict - KRL & TransJakarta Congestion Predictor 🚌
 
-A web-based application with a machine learning model to predict congestion levels for KRL and Transjakarta in Jakarta, helping commuters choose the least crowded transport option.
+A web-based application with a machine learning model to predict congestion levels for KRL and Transjakarta in Jakarta, helping commuters choose the least crowded transport option.  <br>  <br>
 This project was developed as an End-of-Semester Project for "Sistem Informasi Cerdas" course by ARK (Andrew, Runi, Kae)
 
 ## 🚀 Features
