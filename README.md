@@ -11,10 +11,10 @@ This project was developed as an End-of-Semester Project for "Sistem Informasi C
 * **Real-time Data Integration**: Continuously updates predictions based on new data to maintain accuracy.  
 
 ## 🛠 Tech Stack
-Backend: Python (Flask, Pandas, scikit-learn), Joblib  
-Database: In-memory simulation  
-Frontend: HTML, CSS, JavaScript  
-Data Source: Satu Data Jakarta (2024-2025)  
+* **Backend**: Python (Flask, Pandas, scikit-learn), Joblib. 
+* **Database**: In-memory simulation. 
+* **Frontend**: HTML, CSS, JavaScript.
+* **Data Source**: Satu Data Jakarta (2024-2025).  
 
 ## 📂 Folder Structure
 ├── Jumlah_Penumpang_Angkutan_Umum_yang_Terlayani_Perhari.csv  <br>
